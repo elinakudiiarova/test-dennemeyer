@@ -1,0 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace TestProjectDennemeyer.Models;
+
+public class Party
+{
+    public int Id { get; set; }
+    [MaxLength(150)]
+    public string Name { get; set; } = String.Empty;
+    public ICollection<User> Users { get; set; } = new List<User>();
+    public ICollection<Item> Items { get; set; } = new List<Item>();
+    public ICollection<ProposalParty> ProposalParties { get; set; } = new List<ProposalParty>();
+}
