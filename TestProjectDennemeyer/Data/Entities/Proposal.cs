@@ -1,12 +1,12 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace TestProjectDennemeyer.Models;
+namespace TestProjectDennemeyer.Data.Entities;
 
 public class Proposal
 {
     public int Id { get; set; }
-    public DateTime CreatedDateTime { get; set; }
+    public DateTime CreatedDate { get; set; }
     [MaxLength(250)]
     public string? Comment { get; set; }
     public int CreatorId { get; set; }

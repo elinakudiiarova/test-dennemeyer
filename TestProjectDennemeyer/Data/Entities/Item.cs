@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TestProjectDennemeyer.Models;
+namespace TestProjectDennemeyer.Data.Entities;
 
 public class Item
 {
@@ -8,7 +8,7 @@ public class Item
     [MaxLength(250)]
     public string Name { get; set; } = String.Empty;
     public decimal Value { get; set; }
-    public DateTime CreationDate { get; set; }
+    public DateTime CreationDate { get; set; } = DateTime.UtcNow;
     public Party OwnerParty { get; set; } = null!;
     public int OwnerPartyId { get; set; } 
 }

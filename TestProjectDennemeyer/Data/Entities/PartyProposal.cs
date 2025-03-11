@@ -1,4 +1,4 @@
-namespace TestProjectDennemeyer.Models;
+namespace TestProjectDennemeyer.Data.Entities;
 
 public class ProposalParty
 {

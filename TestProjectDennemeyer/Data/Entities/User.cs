@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TestProjectDennemeyer.Models;
+namespace TestProjectDennemeyer.Data.Entities;
 
 public class User
 {
