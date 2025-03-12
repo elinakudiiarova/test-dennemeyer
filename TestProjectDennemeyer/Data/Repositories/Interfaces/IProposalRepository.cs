@@ -44,4 +44,23 @@ public interface IProposalRepository
     /// The created proposal entity with its generated ID and related data.
     /// </returns>
     Task<Proposal?> ReplaceProposalAsync(Proposal newProposal, Proposal initialProposal);
+
+    /// <summary>
+    /// Updates a proposal decision and checks if all parties have accepted the proposal.
+    /// If all parties accept, the proposal is finalized, and the item is marked as shared.
+    /// </summary>
+    /// <param name="proposal">The proposal entity being updated.</param>
+    /// <param name="partyId">The ID of the party making the decision.</param>
+    /// <param name="decisionUserId">The ID of the user making the decision.</param>
+    /// <param name="item">The item associated with the proposal.</param>
+    Task UpdateDecisionAndCheckFinalizationAsync(Proposal proposal, int partyId, int decisionUserId, Item item);
+    
+    /// <summary>
+    /// Updates a proposal party decision by setting acceptance or rejection status.
+    /// </summary>
+    /// <param name="initialProposal">The proposal being updated.</param>
+    /// <param name="partyId">The ID of the party making the decision.</param>
+    /// <param name="decisionUserId">The ID of the user making the decision.</param>
+    /// <param name="decision">The decision value (true for approval, false for rejection).</param>
+    Task UpdateProposalDecisionAsync(Proposal initialProposal, int partyId, int decisionUserId, bool decision);
 }

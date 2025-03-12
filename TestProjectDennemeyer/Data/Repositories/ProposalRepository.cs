@@ -119,4 +119,55 @@ public class ProposalRepository: IProposalRepository
             throw;
         }
     }
+
+    /// <summary>
+    /// Updates a proposal decision and checks if all parties have accepted the proposal.
+    /// If all parties accept, the proposal is finalized, and the item is marked as shared.
+    /// </summary>
+    /// <param name="proposal">The proposal entity being updated.</param>
+    /// <param name="partyId">The ID of the party making the decision.</param>
+    /// <param name="decisionUserId">The ID of the user making the decision.</param>
+    /// <param name="item">The item associated with the proposal.</param>
+    public async Task UpdateDecisionAndCheckFinalizationAsync(Proposal proposal, int partyId, int decisionUserId, Item item)
+    {
+        var partyProposal = proposal.ProposalParties.FirstOrDefault(pp => pp.PartyId == partyId);
+        if (partyProposal == null)
+        {
+            throw new InvalidOperationException("Your company is not part of this proposal.");
+        }
+
+        partyProposal.Accepted = true;
+        partyProposal.DecisionUserId = decisionUserId;
+
+        bool allAccepted = proposal.ProposalParties.All(pp => pp.Accepted == true);
+
+        if (allAccepted)
+        {
+            proposal.Closed = true;
+            item.Shared = true;
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Updates a proposal party decision by setting acceptance or rejection status.
+    /// </summary>
+    /// <param name="initialProposal">The proposal being updated.</param>
+    /// <param name="partyId">The ID of the party making the decision.</param>
+    /// <param name="decisionUserId">The ID of the user making the decision.</param>
+    /// <param name="decision">The decision value (true for approval, false for rejection).</param>
+    public async Task UpdateProposalDecisionAsync(Proposal initialProposal, int partyId, int decisionUserId, bool decision)
+    {
+        var partyProposal = initialProposal.ProposalParties.FirstOrDefault(pp => pp.PartyId == partyId);
+        if (partyProposal == null)
+        {
+            throw new InvalidOperationException("Your company is not part of this proposal.");
+        }
+
+        partyProposal.Accepted = decision;
+        partyProposal.DecisionUserId = decisionUserId;
+
+        await _context.SaveChangesAsync();
+    }
 }

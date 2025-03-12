@@ -51,5 +51,5 @@ public class CreateProposalRequest
     /// </example>
     [Required(ErrorMessage = "Parties with share are required.")]
     [OnlyOneShareRequired]
-    public List<PartyShare> PartyShare { get; set; } = [];
+    public virtual List<PartyShare> PartyShare { get; set; } = [];
 }

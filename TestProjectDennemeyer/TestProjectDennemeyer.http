@@ -1,6 +1,49 @@
 @TestProjectDennemeyer_HostAddress = http://localhost:5133
 
-GET {{TestProjectDennemeyer_HostAddress}}/weatherforecast/
+### Get Proposal History
+GET {{TestProjectDennemeyer_HostAddress}}/api/Proposal/History/{{itemId}}
 Accept: application/json
 
-###
+### Create a New Proposal
+POST {{TestProjectDennemeyer_HostAddress}}/api/Proposal
+Content-Type: application/json
+Accept: application/json
+
+{
+  "itemId": 1,
+  "comment": "This is a sample proposal comment.",
+  "partyShare": [
+    {
+      "partyId": 2,
+      "amount": 500,
+      "percentage": null
+    },
+    {
+      "partyId": 3,
+      "amount": null,
+      "percentage": 50
+    }
+  ]
+}
+
+### Create a Counter Proposal
+POST {{TestProjectDennemeyer_HostAddress}}/api/Proposal/{{proposalId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "itemId": 1,
+  "comment": "Counter proposal with adjusted values.",
+  "partyShare": [
+    {
+      "partyId": 2,
+      "amount": 400,
+      "percentage": null
+    },
+    {
+      "partyId": 3,
+      "amount": null,
+      "percentage": 60
+    }
+  ]
+}

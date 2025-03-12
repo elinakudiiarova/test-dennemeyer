@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using TestProjectDennemeyer.Controllers.Mapper;
+using TestProjectDennemeyer.Controllers.Mappers;
 using TestProjectDennemeyer.Data;
 using TestProjectDennemeyer.Data.Repositories;
 using TestProjectDennemeyer.Data.Repositories.Interfaces;

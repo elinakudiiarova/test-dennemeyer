@@ -11,5 +11,6 @@ public class Item
     public DateTime CreationDate { get; set; } = DateTime.UtcNow;
     public Party? OwnerParty { get; set; }
     public int OwnerPartyId { get; set; }
+    public bool Shared { get; set; } = false;
     public ICollection<Proposal> Proposals { get; set; } = new List<Proposal>();
 }

@@ -1,10 +1,10 @@
 using TestProjectDennemeyer.Controllers.DTO;
 using TestProjectDennemeyer.Data.Entities;
 
-namespace TestProjectDennemeyer.Controllers.Mapper;
+namespace TestProjectDennemeyer.Controllers.Mappers;
 
 /// <summary>
-/// Mapper for proposal controller
+/// Mappers for proposal controller
 /// </summary>
 public class ProposalMapper
 {

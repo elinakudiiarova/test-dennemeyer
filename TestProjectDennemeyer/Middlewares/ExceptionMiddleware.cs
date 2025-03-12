@@ -1,7 +1,6 @@
 
 using System.Net;
 using System.Security.Authentication;
-using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 
 
@@ -14,18 +13,27 @@ public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExceptionMiddleware"/> class.
+    /// </summary>
+    /// <param name="next">The next middleware in the pipeline.</param>
     public ExceptionMiddleware(RequestDelegate next)
     {
         _next = next;
     }
 
+    /// <summary>
+    /// Middleware execution method that processes requests and handles exceptions.
+    /// </summary>
+    /// <param name="context">The HTTP context for the current request.</param>
+    /// <returns>A task that represents the completion of request processing.</returns>
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
             await _next(context);
         }
-        catch (AuthenticationException ex)
+        catch (AuthenticationException)
         {
             await HandleAuthenticationExceptionAsync(context);
         }
@@ -46,7 +54,7 @@ public class ExceptionMiddleware
 
         var response = new
         {
-            StatusCode = context.Response.StatusCode,
+            context.Response.StatusCode,
             Message = "Authentication failed. Please provide existing user."
         };
 
@@ -59,8 +67,7 @@ public class ExceptionMiddleware
 
         var response = new
         {
-            StatusCode = context.Response.StatusCode,
-            Message = exception.Message
+             context.Response.StatusCode, exception.Message
         };
 
         return context.Response.WriteAsync(JsonSerializer.Serialize(response));

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TestProjectDennemeyer.Controllers.DTO;
-using TestProjectDennemeyer.Controllers.Mapper;
+using TestProjectDennemeyer.Controllers.Mappers;
 using TestProjectDennemeyer.Services.Interfaces;
 
 namespace TestProjectDennemeyer.Controllers;
@@ -16,9 +16,10 @@ public class ProposalController : ControllerBase
     private readonly ProposalMapper _proposalMapper;
     private readonly IItemService _itemService;
     private readonly IUserService _userService;
-    
 
-    public ProposalController(IProposalService proposalService, ProposalMapper proposalMapper, IItemService itemService, IUserService userService)
+
+    public ProposalController(IProposalService proposalService, ProposalMapper proposalMapper, IItemService itemService,
+        IUserService userService)
     {
         _proposalService = proposalService;
         _proposalMapper = proposalMapper;
@@ -53,7 +54,7 @@ public class ProposalController : ControllerBase
         {
             return BadRequest("User ID and Item ID must be greater than 0.");
         }
-        
+
         var user = await _userService.GetUserByIdAsync(userId);
         var item = await _itemService.GetItemByIdAsync(itemId);
 
@@ -92,25 +93,26 @@ public class ProposalController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateProposal([FromQuery] int userId, [FromBody] CreateProposalRequest proposalRequest)
+    public async Task<IActionResult> CreateProposal([FromQuery] int userId,
+        [FromBody] CreateProposalRequest proposalRequest)
     {
         if (userId <= 0)
         {
             return BadRequest("User ID must be greater than 0.");
         }
-        
+
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
-        
+
         var user = await _userService.GetUserByIdAsync(userId);
         var item = await _itemService.GetItemByIdAsync(proposalRequest.ItemId);
         if (item is null)
         {
             return NotFound("Item does not exist.");
         }
-        
+
         var createdProposal = await _proposalService.CreateProposalAsync(proposalRequest, user, item);
         var proposalResponse = _proposalMapper.ToProposalInfo(createdProposal, user.PartyId);
 
@@ -140,31 +142,66 @@ public class ProposalController : ControllerBase
         {
             return BadRequest("User ID and Proposal ID must be greater than 0.");
         }
-        
+
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
-        
+
         var user = await _userService.GetUserByIdAsync(userId);
         var item = await _itemService.GetItemByIdAsync(proposalRequest.ItemId);
         if (item is null)
         {
             return NotFound("Item does not exist.");
         }
-        
-        var createdProposal = await _proposalService.CreateCounterProposalAsync(proposalRequest, user, item, proposalId);
+
+        var createdProposal =
+            await _proposalService.CreateCounterProposalAsync(proposalRequest, user, item, proposalId);
         var proposalResponse = _proposalMapper.ToProposalInfo(createdProposal, user.PartyId);
-        
+
         return StatusCode(StatusCodes.Status201Created, proposalResponse);
     }
     
-    // As a user, I want to accept an existing proposal, so I can express my wish to finalize the
-    //     agreement.
-    // - As a user, I want to reject an existing proposal and create a counter-proposal in one
-    //     action, so I can indicate disagreement while proposing a new solution.
-    // - Acceptance criteria
-    // o Can’t accept my own proposal
-    //     o Can’t reject my own proposal
-    //     o Can’t reject proposal without providing counter-proposal
+    /// <summary>
+    /// Finalizes the decision on a proposal by either accepting it or rejecting it with a counter-proposal.
+    /// </summary>
+    /// <param name="proposalId">The ID of the proposal for which the decision is being made.</param>
+    /// <param name="request">The request containing the decision and optional counter-proposal details.</param>
+    /// <param name="userId">The ID of the user making the decision.</param>
+    /// <returns>With the updated proposal information if the decision is successfully processed.</returns>
+    /// <response code="201">Returns created counter-proposal</response>
+    /// <response code="404">If the user or item associated with the proposal is not found.</response>
+    /// <response code="401">If user is not in the system</response>
+    /// <response code="400">If the request is invalid.</response>
+    [HttpPost("{proposalId}/decision")]
+    [ProducesResponseType(typeof(ProposalInfo), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> FinalizeDecisionProposal(int proposalId, [FromQuery] int userId,
+        [FromBody] ProposalDecisionRequest request)
+    {
+        if (userId <= 0 || proposalId <= 0)
+        {
+            return BadRequest("User ID and Proposal ID must be greater than 0.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var user = await _userService.GetUserByIdAsync(userId);
+        var item = await _itemService.GetItemByIdAsync(request.ItemId);
+        if (item is null)
+        {
+            return NotFound("Item does not exist.");
+        }
+        
+        var finalDecision = await _proposalService.FinilizeProposalDecisionAsync(request, user, item, proposalId);
+
+        var proposalResponse = _proposalMapper.ToProposalInfo(finalDecision, user.PartyId);
+
+        return StatusCode(StatusCodes.Status201Created, proposalResponse);
+    }
 }

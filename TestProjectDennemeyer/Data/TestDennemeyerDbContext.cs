@@ -3,18 +3,48 @@ using TestProjectDennemeyer.Data.Entities;
 
 namespace TestProjectDennemeyer.Data;
 
+/// <summary>
+/// Represents the database context for the application.
+/// </summary>
 public class TestDennemeyerDbContext : DbContext
 {
+    /// <summary>
+    /// Gets or sets the Users table.
+    /// </summary>
     public DbSet<User> Users { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the Items table.
+    /// </summary>
     public DbSet<Item> Items { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the Proposals table.
+    /// </summary>
     public DbSet<Proposal> Proposals { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the Parties table.
+    /// </summary>
     public DbSet<Party> Parties { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the ProposalParties table.
+    /// </summary>
     public DbSet<ProposalParty> ProposalParties { get; set; }
     
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TestDennemeyerDbContext"/> class.
+    /// </summary>
+    /// <param name="options">The database context options.</param>
     public TestDennemeyerDbContext(DbContextOptions<TestDennemeyerDbContext> options) : base(options)
     {
     }
     
+    /// <summary>
+    /// Configures the database model and relationships.
+    /// </summary>
+    /// <param name="modelBuilder">The model builder used for entity configuration.</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ProposalParty>()

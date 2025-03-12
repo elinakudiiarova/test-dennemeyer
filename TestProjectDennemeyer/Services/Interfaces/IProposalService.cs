@@ -33,5 +33,15 @@ public interface IProposalService
     /// <param name="item">Shared item.</param>
     /// <param name="initialProposalId">The ID of the initial proposal.</param>
     /// <returns>Created proposal.</returns>
-    Task<Proposal> CreateCounterProposalAsync(CreateCounterProposalRequest proposalRequest, User user, Item item, int initialProposalId);
+    Task<Proposal?> CreateCounterProposalAsync(CreateCounterProposalRequest proposalRequest, User user, Item item, int initialProposalId);
+    
+    /// <summary>
+    /// Create a new counter-proposal.
+    /// </summary>
+    /// <param name="request">Decision for proposal request.</param>
+    /// <param name="user">Creator of proposal.</param>
+    /// <param name="item">Shared item.</param>
+    /// <param name="initialProposalId">The ID of the initial proposal.</param>
+    /// <returns>Created proposal.</returns>
+    Task<Proposal?> FinilizeProposalDecisionAsync(ProposalDecisionRequest request, User user, Item item, int initialProposalId);
 }

@@ -36,6 +36,6 @@ public class PartyShare
     /// This value must be between 0 and 100. If this field is provided, <see cref="Amount"/> must be omitted.
     /// </remarks>
     /// <example>50.0</example>
-    [Range(0, 100, ErrorMessage = "Percentage must be between 0 and 100.")]
+    [Range(0.01, 100, ErrorMessage = "Percentage must be between 0 and 100.")]
     public decimal? Percentage { get; set; }
 }
