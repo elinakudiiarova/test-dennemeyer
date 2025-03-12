@@ -1,0 +1,30 @@
+Assumptions and considerations
+
+First of all, in the scope of this task I was not making assumptions about such scenarios as:
+- deleting current proposal,
+- creating new proposal with other companies,
+- expiration dates on proposals if there are such,
+- etc.
+
+Assumption 1: While proposal is not approved by everyone, item isn’t being shared.
+Assumption 2: The user is associated with only one party, party can have multiple users.
+Assumption 3: The item can only have one proposal per time. Parties can have multiple open negotiations. 
+Assumption 4: The item always has one owner, other parties just share it.
+Assumption 5: We do not need Auth in the task, so we can use userId to validate if a user is in the system at least.
+Assumption 6: When we start negotiations for an item, we can not reject without counter-proposal.
+Assumption 7: After party has made its decision, it can not redo it.
+Assumption 8: If one party has declined proposal, the proposal can be closed because it will not be successful anymore and we have received a new proposal. 
+Assumption 9: If I delete party, I want all users to be deleted.
+Assumption 10: If item will be deleted, proposals to be deleted too.
+Assumption 11: In Story 2 negotiation process can be only seen by the parties that are in the process of negotiations. 
+Assumption 12: On the proposal creation our Amount of value should be 100.
+Assumption 13: Amount or Percentage must be provided, but not both.
+Assumption 14: Amount or Percentage must be more than 0.
+
+Consideration 1: Status decisions should be separate for each party.
+Consideration 2: Using EF Core with code-first approach.
+Consideration 3: We should save create user to proposal and decision user to party-proposal.
+Consideration 4: Saving nullable Percentage and non-nullable Amount gives an ability to show on UI how users have entered values.
+
+
+I definetely made more assumptions and considerations, but these are the ones that I have written.
