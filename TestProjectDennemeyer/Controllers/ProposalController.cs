@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TestProjectDennemeyer.Controllers.DTO;
 using TestProjectDennemeyer.Controllers.Mapper;
-using TestProjectDennemeyer.Services;
 using TestProjectDennemeyer.Services.Interfaces;
 
 namespace TestProjectDennemeyer.Controllers;
@@ -44,7 +43,7 @@ public class ProposalController : ControllerBase
     /// <response code="401">If user is not in the system</response>
     /// <response code="400">If userId or itemId are null</response>
     [HttpGet("{itemId}")]
-    [ProducesResponseType(typeof(IEnumerable<ProposalHistoryResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<ProposalHistoryResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -78,30 +77,94 @@ public class ProposalController : ControllerBase
         return Ok(proposalHistoryResponse);
     }
 
+    /// <summary>
+    /// Creates a new proposal for a shared item. You can use percentages or amounts for share.
+    /// </summary>
+    /// <param name="userId">The ID of the user that will create proposal.</param>
+    /// <param name="proposalRequest">A body request for proposal.</param>
+    /// <returns>Created proposal.</returns>
+    /// <response code="201">Returns created proposal</response>
+    /// <response code="404">If item does not exist</response>
+    /// <response code="401">If user is not in the system</response>
+    /// <response code="400">If userId is null or body is incorrect or if proposal already exists</response>
     [HttpPost]
+    [ProducesResponseType(typeof(ProposalInfo), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateProposal([FromQuery] int userId, [FromBody] CreateProposalRequest proposalRequest)
     {
-        //As a user, I want to create a new proposal for a shared item, so I can propose payment
-        // ratios for all parties involved, in order to pay full amount together.
-        // - Acceptance Criteria:
-        // o Proposals can include an optional message/comment.
-        // o Should be able to submit proposal either in percentages (i.e. 25%) or in amounts
-        // (i.e. 25.000€)
+        if (userId <= 0)
+        {
+            return BadRequest("User ID must be greater than 0.");
+        }
         
-        //  Submitting proposal should be allowed only if there are no other proposals.
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        
+        var user = await _userService.GetUserByIdAsync(userId);
+        var item = await _itemService.GetItemByIdAsync(proposalRequest.ItemId);
+        if (item is null)
+        {
+            return NotFound("Item does not exist.");
+        }
+        
+        var createdProposal = await _proposalService.CreateProposalAsync(proposalRequest, user, item);
+        var proposalResponse = _proposalMapper.ToProposalInfo(createdProposal, user.PartyId);
 
-        //  If there are other proposals, then counter proposal must be submitted
-        // (handled through another story)
-        
-        
-        //if user party has other proposals -> error that must be done contrproposal, so we can not 
-        return Ok();
+        return StatusCode(StatusCodes.Status201Created, proposalResponse);
     }
 
+    /// <summary>
+    /// Creates a counter-proposal for a shared item. You can use percentages or amounts for share.
+    /// </summary>
+    /// <param name="userId">The ID of the user that will create counter-proposal.</param>
+    /// <param name="proposalId">The ID of proposal that being responded to.</param>
+    /// <param name="proposalRequest">A body request for counter-proposal.</param>
+    /// <returns>Created counter-proposal.</returns>
+    /// <response code="201">Returns created counter-proposal</response>
+    /// <response code="404">If item does not exist</response>
+    /// <response code="401">If user is not in the system</response>
+    /// <response code="400">If userId is null or body is incorrect. If there are no proposals or it is closed. If you try to create on your proposal counter-proposal.</response>
     [HttpPost("{proposalId}")]
-    public async Task<IActionResult> CreateContrProposal(int proposalId, [FromQuery] int userId,
-        [FromBody] CreateProposalRequest proposalRequest)
+    [ProducesResponseType(typeof(ProposalInfo), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateCounterProposal(int proposalId, [FromQuery] int userId,
+        [FromBody] CreateCounterProposalRequest proposalRequest)
     {
-        return Ok();
+        if (userId <= 0 || proposalId <= 0)
+        {
+            return BadRequest("User ID and Proposal ID must be greater than 0.");
+        }
+        
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        
+        var user = await _userService.GetUserByIdAsync(userId);
+        var item = await _itemService.GetItemByIdAsync(proposalRequest.ItemId);
+        if (item is null)
+        {
+            return NotFound("Item does not exist.");
+        }
+        
+        var createdProposal = await _proposalService.CreateCounterProposalAsync(proposalRequest, user, item, proposalId);
+        var proposalResponse = _proposalMapper.ToProposalInfo(createdProposal, user.PartyId);
+        
+        return StatusCode(StatusCodes.Status201Created, proposalResponse);
     }
+    
+    // As a user, I want to accept an existing proposal, so I can express my wish to finalize the
+    //     agreement.
+    // - As a user, I want to reject an existing proposal and create a counter-proposal in one
+    //     action, so I can indicate disagreement while proposing a new solution.
+    // - Acceptance criteria
+    // o Can’t accept my own proposal
+    //     o Can’t reject my own proposal
+    //     o Can’t reject proposal without providing counter-proposal
 }

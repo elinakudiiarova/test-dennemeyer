@@ -9,7 +9,7 @@ public class User
     public string Name { get; set; } = String.Empty;
     [MaxLength(100)]
     public string Surname { get; set; } = String.Empty;
-    public Party Party { get; set; } = null!;
+    public Party? Party { get; set; }
     public int PartyId { get; set; }
     public ICollection<ProposalParty>? ProposalParties { get; set; }
 }

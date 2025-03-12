@@ -23,12 +23,14 @@ public class TestDennemeyerDbContext : DbContext
         modelBuilder.Entity<ProposalParty>()
             .HasOne(pp => pp.Party)
             .WithMany(p => p.ProposalParties)
-            .HasForeignKey(pp => pp.PartyId);
+            .HasForeignKey(pp => pp.PartyId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<ProposalParty>()
             .HasOne(pp => pp.Proposal)
             .WithMany(p => p.ProposalParties)
-            .HasForeignKey(pp => pp.ProposalId);
+            .HasForeignKey(pp => pp.ProposalId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<ProposalParty>()
             .HasOne(pp => pp.DecisionUser)
@@ -49,16 +51,22 @@ public class TestDennemeyerDbContext : DbContext
             .OnDelete(DeleteBehavior.Cascade);
         
         modelBuilder.Entity<Proposal>()
-            .HasOne(i => i.Item)
-            .WithOne()
-            .HasForeignKey<Proposal>(p => p.ItemId)
-            .OnDelete(DeleteBehavior.Cascade);
-
+            .HasOne(p => p.Item)
+            .WithMany(i => i.Proposals)
+            .HasForeignKey(p => p.ItemId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
         modelBuilder.Entity<Proposal>()
             .HasOne(p => p.Creator)
             .WithMany()
             .HasForeignKey(p => p.CreatorId)
             .OnDelete(DeleteBehavior.SetNull);
+        
+        modelBuilder.Entity<Proposal>()
+            .HasMany(p => p.ProposalParties)
+            .WithOne(pp => pp.Proposal)
+            .HasForeignKey(pp => pp.ProposalId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Party>().HasData(
             new Party

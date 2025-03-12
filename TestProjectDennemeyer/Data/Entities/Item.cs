@@ -9,6 +9,7 @@ public class Item
     public string Name { get; set; } = String.Empty;
     public decimal Value { get; set; }
     public DateTime CreationDate { get; set; } = DateTime.UtcNow;
-    public Party OwnerParty { get; set; } = null!;
-    public int OwnerPartyId { get; set; } 
+    public Party? OwnerParty { get; set; }
+    public int OwnerPartyId { get; set; }
+    public ICollection<Proposal> Proposals { get; set; } = new List<Proposal>();
 }

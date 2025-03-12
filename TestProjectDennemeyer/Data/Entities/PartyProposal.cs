@@ -3,9 +3,9 @@ namespace TestProjectDennemeyer.Data.Entities;
 public class ProposalParty
 {
     public int Id { get; set; }
-    public Party Party { get; set; } = null!;
+    public Party? Party { get; set; }
     public int PartyId { get; set; }
-    public Proposal Proposal { get; set; } = null!;
+    public Proposal? Proposal { get; set; }
     public int ProposalId { get; set; }
     public bool? Accepted { get; set; }
     public int? DecisionUserId { get; set; }

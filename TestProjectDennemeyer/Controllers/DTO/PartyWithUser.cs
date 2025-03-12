@@ -1,16 +1,17 @@
 namespace TestProjectDennemeyer.Controllers.DTO;
 
 /// <summary>
-/// This DTO represents information about the company, and it's connected to the action user
+/// Represents information about a party and the user associated with its actions.
 /// </summary>
 public class PartyWithUser
 {
     /// <summary>
-    /// Party information
+    /// Information about the party.
     /// </summary>
-    public PartyInfo Party { get; set; }
+    public required PartyInfo Party { get; set; }
+
     /// <summary>
-    /// User that represents action done by the party
+    /// The user representing the party's action in a proposal.
     /// </summary>
     public UserInfo? User { get; set; }
 }

@@ -8,7 +8,7 @@ public class Party
     [MaxLength(150)]
     public string Name { get; set; } = String.Empty;
     public DateTime CreationDate { get; set; }
-    public ICollection<User> Users { get; set; } = new List<User>();
-    public ICollection<Item> Items { get; set; } = new List<Item>();
-    public ICollection<ProposalParty> ProposalParties { get; set; } = new List<ProposalParty>();
+    public ICollection<User> Users { get; set; } = [];
+    public ICollection<Item> Items { get; set; } = [];
+    public ICollection<ProposalParty> ProposalParties { get; set; } = [];
 }

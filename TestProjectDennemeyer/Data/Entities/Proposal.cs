@@ -10,9 +10,9 @@ public class Proposal
     [MaxLength(250)]
     public string? Comment { get; set; }
     public int CreatorId { get; set; }
-    public User Creator { get; set; } = null!;
+    public User Creator { get; set; }
     public int ItemId { get; set; }
-    public Item Item { get; set; } = null!;
-    public bool? Closed { get; set; } 
+    public Item Item { get; set; }
+    public bool Closed { get; set; } = false;
     public ICollection<ProposalParty> ProposalParties { get; set; } = new List<ProposalParty>();
 }
