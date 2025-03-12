@@ -4,7 +4,7 @@ using TestProjectDennemeyer.Data.Entities;
 namespace TestProjectDennemeyer.Controllers.Mappers;
 
 /// <summary>
-/// Mappers for proposal controller
+/// Mapper for proposal controller
 /// </summary>
 public class ProposalMapper
 {

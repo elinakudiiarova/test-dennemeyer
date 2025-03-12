@@ -14,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddSingleton<ProposalMapper>();
+builder.Services.AddSingleton<ItemMapper>();
 builder.Services.AddScoped<IProposalService, ProposalService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IItemService, ItemService>();
